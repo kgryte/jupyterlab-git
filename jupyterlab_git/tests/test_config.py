@@ -43,10 +43,9 @@ def test_git_get_config_success(popen, finish):
     )
     process_mock.communicate.assert_called_once_with()
 
-    finish.assert_called_once()
-    assert len(finish.call_args.args) == 1
-    assert len(finish.call_args.kwargs) == 0
-    assert json.loads(finish.call_args.args[0]) == {
+    assert len(finish.call_args[0]) == 1
+    assert len(finish.call_args[1]) == 0
+    assert json.loads(finish.call_args[0][0]) == {
         "code": 0,
         "options": {"user.name": "John Snow", "user.email": "john.snow@iscoming.com"},
     }
@@ -100,7 +99,6 @@ def test_git_set_config_success(popen, finish):
     )
     assert process_mock.communicate.call_count == 2
 
-    finish.assert_called_once()
-    assert len(finish.call_args.args) == 1
-    assert len(finish.call_args.kwargs) == 0
-    assert json.loads(finish.call_args.args[0]) == {"code": 0, "message": ""}
+    assert len(finish.call_args[0]) == 1
+    assert len(finish.call_args[1]) == 0
+    assert json.loads(finish.call_args[0][0]) == {"code": 0, "message": ""}
