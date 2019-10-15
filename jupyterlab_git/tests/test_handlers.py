@@ -1,5 +1,5 @@
 import json
-from mock import Mock, ANY, patch
+from unittest.mock import Mock, ANY, patch
 
 from jupyterlab_git.handlers import (
     GitAllHistoryHandler,
@@ -179,7 +179,11 @@ def test_push_handler_noupstream(mock_finish, mock_git):
     mock_git.get_current_branch.assert_called_with('test_path')
     mock_git.get_upstream_branch.assert_called_with('test_path', 'foo')
     mock_git.push.assert_not_called()
-    mock_finish.assert_called_with('{"code": 128, "message": "fatal: The current branch foo has no upstream branch."}')
+    mock_finish.assert_called_once()
+    
+    assert len(mock_finish.call_args.args) == 1
+    assert len(mock_finish.call_args.kwargs) == 0
+    assert json.loads(mock_finish.call_args.args[0]) == {"code": 128, "message": "fatal: The current branch foo has no upstream branch."}
 
 
 @patch('jupyterlab_git.handlers.GitUpstreamHandler.__init__', Mock(return_value=None))

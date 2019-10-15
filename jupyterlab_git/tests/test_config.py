@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from mock import patch, call, Mock
+from unittest.mock import patch, call, Mock
 import pytest
 
 from jupyterlab_git.git import Git
@@ -43,17 +43,13 @@ def test_git_get_config_success(popen, finish):
     )
     process_mock.communicate.assert_called_once_with()
 
-    finish.assert_called_once_with(
-        json.dumps(
-            {
-                "code": 0,
-                "options": {
-                    "user.name": "John Snow",
-                    "user.email": "john.snow@iscoming.com",
-                },
-            }
-        )
-    )
+    finish.assert_called_once()
+    assert len(finish.call_args.args) == 1
+    assert len(finish.call_args.kwargs) == 0
+    assert json.loads(finish.call_args.args[0]) == {
+        "code": 0,
+        "options": {"user.name": "John Snow", "user.email": "john.snow@iscoming.com"},
+    }
 
 
 @patch("jupyterlab_git.handlers.GitConfigHandler.__init__", Mock(return_value=None))
@@ -104,4 +100,7 @@ def test_git_set_config_success(popen, finish):
     )
     assert process_mock.communicate.call_count == 2
 
-    finish.assert_called_once_with(json.dumps({"code": 0, "message": ""}))
+    finish.assert_called_once()
+    assert len(finish.call_args.args) == 1
+    assert len(finish.call_args.kwargs) == 0
+    assert json.loads(finish.call_args.args[0]) == {"code": 0, "message": ""}
